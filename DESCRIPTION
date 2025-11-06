@@ -1,6 +1,6 @@
 Package: BeeGUTS
 Title: General Unified Threshold Model of Survival for Bees using Bayesian Inference
-Version: 1.3.0
+Version: 1.4.0
 Authors@R: 
     c(
     person(given = "Benoit",
@@ -12,8 +12,8 @@ Authors@R:
            family = "Zakharova",
            role = c("ctb"),
            email = "liubov.zakharova@ibacon.com"),
-    person(given = "Romoli",
-           family = "Carlo",
+    person(given = "Carlo",
+           family = "Romoli",
            role = c("aut", "cre"),
            email = "carlo.romoli@ibacon.com"),
     person("Bayer AG",
