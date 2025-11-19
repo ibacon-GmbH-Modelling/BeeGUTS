@@ -128,6 +128,10 @@ dataGUTS <- function(file_location = NULL,
     'Osmia_bicornis', and 'User_Bee'. Other types of bees are not yet implemented.")
   }
 
+  # if(exists("binning")){
+  #   binning = binning
+  # }
+
   if(bee_species == "Honey_Bee"){
     if(!exists("k_ca")) {
       k_ca <- 0.4 # Default value for Honey bees
@@ -342,15 +346,14 @@ dataGUTS <- function(file_location = NULL,
 #' @param cTime The duration of exposure in days, default is 0.25 d
 #' @param k_sr Stomach release rate (d-1), default is 0.625
 #' @param expTime The duration of the experiment in days
-#' @param ... Not used
+#' @param binning binning of the time vector, default 0.5 d
 #'
 #' @return A data frame containing a column with the time points and a column with the
 #' recalculated concentrations
 #' @export
 #'
 #' @examples conc <- concAO(cExt = cbind(3.5, 6, 8, 10), cTime = 0.25, expTime = 4)
-concAO <- function(cExt, cTime = 0.25, expTime, k_sr = 0.625, ...) {
-  binning <- 0.05
+concAO <- function(cExt, cTime = 0.25, expTime, k_sr = 0.625, binning=0.5) {
   #timePoint <- seq(0, expTime, binning)
   timePoint <- unique(c(seq(0, cTime, binning), seq(cTime, expTime, binning), expTime))
   cExt <- cExt[rep(seq_len(nrow(cExt)), each = length(timePoint)),] # Expend cExt to allow concentration calculation for all time points
@@ -364,6 +367,7 @@ concAO <- function(cExt, cTime = 0.25, expTime, k_sr = 0.625, ...) {
 #' @param cExt The concentration applied
 #' @param expTime The duration of the experiment in days
 #' @param k_ca Contact availability rate (d-1), default is 0.4
+#' @param binning binning of the time vector, default 0.5 d
 #' @param ... Not used
 #'
 #' @return A data frame containing a column with the time points and a column with the
@@ -371,8 +375,8 @@ concAO <- function(cExt, cTime = 0.25, expTime, k_sr = 0.625, ...) {
 #' @export
 #'
 #' @examples conc <- concAC(cbind(3.1, 4, 6, 8), 4)
-concAC <- function(cExt, expTime, k_ca = 0.4, ...) {
-  timePoint <- unique(c(seq(0, expTime, 0.05), expTime))
+concAC <- function(cExt, expTime, k_ca = 0.4, binning=0.5) {
+  timePoint <- unique(c(seq(0, expTime, binning), expTime))
   cExt <- cExt[rep(seq_len(nrow(cExt)), each = length(timePoint)),] # Expend cExt to allow concentration calculation for all time points
   out <-cExt * exp(-k_ca * timePoint)
   return(data.frame(SurvivalTime = timePoint, out))

@@ -1,3 +1,6 @@
+# BeeGUTS 1.5
+* Performance improvements in fit of Acute datasets
+
 # BeeGUTS 1.4
 * Change of maintener
 
