@@ -58,7 +58,7 @@ devtools::install_github("bgoussen/BeeGUTS")
 ## Documentation
 
 Detailed documentation is available
-[here](https://github.com/bgoussen/BeeGUTS/blob/dev-docs/docs/home.md)
+[here](https://github.com/ibacon-GmbH-Modelling/BeeGUTS/blob/dev-docs/docs/home.md)
 
 ## Example
 
