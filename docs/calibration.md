@@ -112,6 +112,30 @@ In the figure it is possible to see how the traces are all well behaving
 after the burn-in period (represented by the grey area), and that the 3
 chains mixed well.
 
+The comparison between the original prior and the final posterior distributions
+can be plotted with the function
+
+```r
+priorposterior_plot(fitSD)
+```
+
+This function generates two figures, the first one for the background mortality
+parameter, and the second one for the remaining GUTS parameters.
+
+<img src="figures/priorposterior_hb.png" width="45%" />
+<img src="figures/priorposterior_allSD.png" width="45%" />
+
+Additionally, from the fit object it is possible to plot the pairwise
+correlation between the parameter, looking at the 2D scatter plots of the
+posterior distributions. This is done with the function
+
+```r
+correlation_plot(fitSD)
+```
+
+<img src="figures/correlationplot.png" width="75%" />
+
+
 ### Goodness of fit and EFSA criteria
 
 In the Scientific Opinion on TKTD models, EFSA defined performance

@@ -1,6 +1,6 @@
 Additional Documentation for BeeGUTS
 ================
-2024-10-17
+2025-11-20
 
 ## Documentation
 
@@ -12,7 +12,7 @@ Unified Threshold model of Survival (GUTS).
 
 The links below point towards specific pages that will guide you through
 the various aspects of the BeeGUTS package (These pages refer to package version
-1.3)
+1.4)
 
 - [Datasets and Data read](./dataset_loading.md)
 - [Model calibration](./calibration.md)
