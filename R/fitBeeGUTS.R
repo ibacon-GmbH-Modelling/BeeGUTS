@@ -68,6 +68,7 @@
 #' }
 fitBeeGUTS <- function(data, # CHECK CORRECT DATA OBJECT IS USED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                        modelType = NULL,
+                       prefithb = FALSE,
                        distribution = "loglogistic",
                        priorsList = NULL,
                        parallel = TRUE,
@@ -125,6 +126,18 @@ fitBeeGUTS <- function(data, # CHECK CORRECT DATA OBJECT IS USED !!!!!!!!!!!!!!!
 
   }
 
+  if (prefithb == TRUE){
+    hbfit = fit_hb(data,...)
+    hbfitsum = rstan::summary(hbfit)
+    # approximate the new prior from the result with a normal distribution
+    # on log scale
+    # NEEDS additional testing
+    lsStanData$hbMean_log10 = hbfitsum$summary["hb_log10[1]","mean"]
+    lsFullData$hbMean_log10 = hbfitsum$summary["hb_log10[1]","mean"]
+    lsStanData$hbSD_log10 = hbfitsum$summary["hb_log10[1]","sd"]
+    lsFullData$hbSD_log10 = hbfitsum$summary["hb_log10[1]","sd"]
+  }
+
   # Sample MCMC chains
   fit <- rstan::sampling(
     object = modelObject,
@@ -175,4 +188,126 @@ fitBeeGUTS <- function(data, # CHECK CORRECT DATA OBJECT IS USED !!!!!!!!!!!!!!!
   class(lsOut) <- "beeSurvFit"
 
   return(lsOut)
+}
+
+
+
+fit_hb = function(data,nChains = 3,
+                  nIter = 2000,
+                  nWarmup = floor(nIter / 2),
+                  thinInterval = 1,
+                  adaptDelta = 0.95){
+  # Need here to perform a fit of the hb value for each of the calibration
+  # datasets
+  cat("Fitting the background mortality parameter on the control data.","\n")
+  data_control = NULL
+  for (i in 1:data$nDatasets){
+    data_control$survData_long[[i]] = data$survData_long[[i]] %>%
+      dplyr::filter(Treatment == "Control")
+    data_control$concModel_long[[i]] = data$concModel_long[[i]] %>%
+      dplyr::filter(Treatment == "Control")
+  }
+  dataSurv <- dplyr::bind_rows(data_control$concModel_long) %>%
+              dplyr::filter(!is.na(Conc)) %>%
+              dplyr::arrange(Dataset, Treatment, SurvivalTime) %>%
+              dplyr::mutate(idAll = dplyr::row_number() ) %>%
+              dplyr::filter(SurvivalTime != 0)
+  timeMin = min(dataSurv$SurvivalTime)
+  timeMax <- max(dataSurv$SurvivalTime)
+  hbMax = -log(0.5) / timeMin
+  hbMin = -log(0.999) / timeMax
+  hbMean_log10 =  .priorMean(hbMin, hbMax)
+  hbSD_log10 = .priorSD(hbMin, hbMax)
+
+  priorlist = c(hbMean_log10 =  hbMean_log10,
+                hbSD_log10 = hbSD_log10)
+  data_control$nDatasets = data$nDatasets
+  lsStanData <- dataFitStan(data_control, "SD", NULL, priorlist)
+  lsStanData$nGroups = rep(1,data$nDatasets)
+  lsStanData$nGroup = sum(lsStanData$nGroups)
+  if (length(lsStanData$nGroups)>1){
+    lsStanData$groupDataset = rep(1:length(lsStanData$nGroups), lsStanData$nGroups)
+  } else {
+    lsStanData$groupDataset = array(rep(1:length(lsStanData$nGroups), lsStanData$nGroups),dim = lsStanData$nGroups)
+  }
+
+  modelObject <- stanmodels$GUTS_hb_only
+  chcr <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
+  if (nzchar(chcr) && chcr == "TRUE") {
+    # this is needed in order to pass CRAN checks
+    # use 2 cores in CRAN/Travis/AppVeyor
+    nCores <- 2L
+  } else {
+    # use all cores in devtools::test()
+    nCores = parallel::detectCores(logical = FALSE)-1L
+  }
+  op <- options()
+  options(mc.cores = as.integer(nCores))
+  on.exit(options(op))
+
+  hbfit <- rstan::sampling(
+    object = modelObject,
+    data = lsStanData,
+    chains = nChains,
+    iter = nIter,
+    warmup = nWarmup,
+    thin = thinInterval,
+    control = list(adapt_delta = 0.95))
+
+  tmpRes <- rstan::monitor(hbfit, print = FALSE)
+  maxRhat <- max(rstan::summary(hbfit)$summary[,"Rhat"], na.rm= TRUE)
+  minBulk_ESS <- min(tmpRes$Bulk_ESS)
+  minTail_ESS <- min(tmpRes$Tail_ESS)
+
+  ## Common parameters
+  hb_med <- c()
+  hb_inf95 <- c()
+  hb_sup95 <- c()
+  for(i in 1:data$nDatasets){
+    parname <- ifelse(data$nDatasets == 1, "hb_log10", paste0("hb_log10[",i,"]"))
+    hb_med[i] <- 10^tmpRes[[parname, "50%"]]
+    hb_inf95[i] <- 10^tmpRes[[parname, "2.5%"]]
+    hb_sup95[i] <- 10^tmpRes[[parname, "97.5%"]]
+  }
+  hbNames <- c()
+  for(i in 1:data$nDatasets){
+    hbNames[i] <- paste0("hb[",i,"]")
+  }
+  outPost_hb <- data.frame(parameters = hbNames,
+                           median = hb_med,
+                           Q2.5 = hb_inf95,
+                           Q97.5 = hb_sup95)
+
+  cat("Bayesian Inference performed with Stan.\n",
+      "MCMC sampling setup (select with '$setupMCMC')\n",
+      "Iterations:", nIter, "\n",
+      "Warmup iterations:", nWarmup, "\n",
+      "Thinning interval:", thinInterval, "\n",
+      "Number of chains:", nChains,"\n")
+  cat("\nMaximum Rhat computed (na.rm = TRUE):", maxRhat, "\n",
+      "Minimum Bulk_ESS:", minBulk_ESS, "\n",
+      "Minimum Tail_ESS:", minTail_ESS, "\n",
+      "Bulk_ESS and Tail_ESS are crude measures of effecting sampling size for
+      bulk and tail quantities respectively. An ESS > 100 per chain can be
+      considered as a good indicator. Rhat is an indicator of chains convergence.
+      A Rhat <= 1.05 is a good indicator of convergence. For detail results,
+      one can call 'rstan::monitor(beeSurvValidation$hbfit)","\n\n")
+
+  cat("Results for hb:","\n")
+  print(outPost_hb, row.names = FALSE)
+
+  return(hbfit)
+}
+
+
+# internal --------------------------------------------------------------------
+
+# Compute priors Mean and SD for lognormal distribution
+
+.priorMean <- function(xMin, xMax){
+  (log10(xMax) + log10(xMin)) / 2
+}
+
+.priorSD <- function(xMin, xMax){
+  (log10(xMax) - log10(xMin)) / 4
 }
