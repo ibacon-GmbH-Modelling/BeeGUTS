@@ -157,7 +157,11 @@ refit_hb = function(object, dataValidate){
   data_control$nDatasets = 1
   lsStanData <- dataFitStan(data_control, "SD", NULL, priorlist)
   lsStanData$nGroups = 1
-  lsStanData$groupDataset = 1
+  if (length(lsStanData$nGroups)>1){
+    lsStanData$groupDataset = rep(1:length(lsStanData$nGroups), lsStanData$nGroups)
+  } else {
+    lsStanData$groupDataset = array(rep(1:length(lsStanData$nGroups), lsStanData$nGroups),dim = lsStanData$nGroups)
+  }
 
   modelObject <- stanmodels$GUTS_hb_only
   chcr <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
