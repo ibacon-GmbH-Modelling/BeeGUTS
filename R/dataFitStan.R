@@ -83,8 +83,8 @@ dataFitStan <- function(data,
   lsOUT$tNsurv <- dataNsurv$SurvivalTime
   lsOUT$replicate_Nsurv <- dataNsurv$Treatment
 
-  lsOUT$idS_lw <- dataNsurv_id$idS_lw
-  lsOUT$idS_up <- dataNsurv_id$idS_up
+  lsOUT$idS_lw <- array(dataNsurv_id$idS_lw, dim=length(dataNsurv_id$idS_lw))
+  lsOUT$idS_up <- array(dataNsurv_id$idS_up, dim=length(dataNsurv_id$idS_up))
 
   return(lsOUT)
 }

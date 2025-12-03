@@ -13,6 +13,7 @@ int <lower=1> nDatasets;
 
 // Number of groups
 int<lower=1> nGroup; // Number of groups (one group is combination of one dataset and one treatment)
+array[nGroup] int groupDataset; // Corresponding dataset for each group
 
 // Survivors
 int<lower=1> nData_Nsurv; // number of group: 4
@@ -20,8 +21,8 @@ array[nData_Nsurv] int Nsurv;
 array[nData_Nsurv] int Nprec;
 array[nData_Nsurv] real tNsurv; // time of Nbr survival
 
-int<lower=1> idS_lw; // e.g. 1 6 12 18
-int<lower=1> idS_up; // e.g. 6 12 18 24
+array[nGroup] int<lower=1> idS_lw; // e.g. 1 6 12 18
+array[nGroup] int<lower=1> idS_up; // e.g. 6 12 18 24
 
 // PRIORS
 real hbMean_log10;
@@ -29,55 +30,56 @@ real hbSD_log10;
 }
 transformed data{
 
+//  array[nData_Nsurv] real tNsurv_ode; // time of Nbr survival to include in the ode !
+//  for(gr in 1:nGroup){
+//    tNsurv_ode[idS_lw[gr]:idS_up[gr]] = tNsurv[idS_lw[gr]:idS_up[gr]];
+//    tNsurv_ode[idS_lw[gr]] = tNsurv[idS_lw[gr]] + 1e-9 ; // to start ode integrator at 0
+//  }
 
 }
 parameters {
 
-  real sigma;
+  array[nDatasets] real sigma;
 
 }
 transformed parameters{
 
-  real hb_log10;
-
+  array[nDatasets] real hb_log10;
   real<lower=0> param; //
 
   vector<lower=0, upper=1>[nData_Nsurv] Psurv_hat;
   vector<lower=0, upper=1>[nData_Nsurv] Conditional_Psurv_hat;
 
-  hb_log10  = hbMean_log10 + hbSD_log10 * sigma;
-
-  for(i in 1:nData_Nsurv){
-    param = 10^hb_log10; // hb
-
-    Psurv_hat[i] = exp( - param * tNsurv[i]);
-    Conditional_Psurv_hat[i] =  i == 1 ? Psurv_hat[i] : Psurv_hat[i] / Psurv_hat[i-1] ;
+  for(i in  1:nDatasets){
+    hb_log10[i]  = hbMean_log10 + hbSD_log10 * sigma[i];
   }
 
+  for(gr in 1:nGroup){
+      param = 10.0^hb_log10[groupDataset[gr]]; // hb
+      print(param);
+      print(tNsurv[idS_lw[gr]:idS_up[gr]]);
+      Psurv_hat[idS_lw[gr]:idS_up[gr]] = exp( - param * to_vector(tNsurv[idS_lw[gr]:idS_up[gr]]));
+      //Psurv_hat[idS_lw[gr]:idS_up[gr]] = to_vector(tNsurv_ode[idS_lw[gr]:idS_up[gr]]); //exp( - param * tNsurv_ode[idS_lw[gr]:idS_up[gr]]);
+
+      for(i in idS_lw[gr]:idS_up[gr]){
+        Conditional_Psurv_hat[i] =  i == idS_lw[gr] ? Psurv_hat[i] : Psurv_hat[i] / Psurv_hat[i-1] ;
+      }
+  }
 }
 model {
 
   target += normal_lpdf(sigma | 0, 1);
 
-  target += binomial_lpmf(Nsurv[idS_lw:idS_up] | Nprec[idS_lw:idS_up], Conditional_Psurv_hat[idS_lw:idS_up]);
+    for(gr in 1:nGroup){
+
+    target += binomial_lpmf(Nsurv[idS_lw[gr]:idS_up[gr]] | Nprec[idS_lw[gr]:idS_up[gr]], Conditional_Psurv_hat[idS_lw[gr]:idS_up[gr]]);
+
+    // Nsurv[idS_lw[gr]:idS_up[gr]] ~ binomial( Nprec[idS_lw[gr]:idS_up[gr]], Conditional_Psurv_hat[idS_lw[gr]:idS_up[gr]]);
+
+  }
 }
 generated quantities {
 
-  array[nData_Nsurv] int Nsurv_ppc;
-  array[nData_Nsurv] int Nsurv_sim;
-  array[nData_Nsurv] int Nsurv_sim_prec;
-
-  vector[nData_Nsurv] log_lik;
-
-  /* binomial_rng function cannot be vectorized, so we need to use a loop*/
-   for(i in idS_lw:idS_up){
-     Nsurv_ppc[i] = binomial_rng(Nprec[i], Conditional_Psurv_hat[i]);
-
-     Nsurv_sim_prec[i] = i == idS_lw ? Nprec[i] : Nsurv_sim[i-1] ;
-
-     Nsurv_sim[i] = binomial_rng(Nsurv_sim_prec[i], Conditional_Psurv_hat[i]);
-
-     log_lik[i] = binomial_lpmf(Nsurv[idS_lw:idS_up] | Nprec[idS_lw:idS_up], Conditional_Psurv_hat[idS_lw:idS_up]);
-   }
+#include /include/gen_quantities_guts.stan
 }
 
