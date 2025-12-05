@@ -94,7 +94,7 @@ fitBeeGUTS <- function(data, # CHECK CORRECT DATA OBJECT IS USED !!!!!!!!!!!!!!!
   if (!(distribution %in% c("loglogistic", "lognormal"))) {
     stop("You need to specifiy a correct 'distribution' amongst 'loglogistic' and 'lognormal'.")
   }
-  if (!(odeIntegrator %in% c("rk45"))) {
+  if (!(odeIntegrator %in% c("rk45","euler"))) {
     stop("You need to specifiy a correct 'odeIntegrator' amongst 'rk45'.
          'bdf' is not yet implemented")
   }
@@ -111,6 +111,9 @@ fitBeeGUTS <- function(data, # CHECK CORRECT DATA OBJECT IS USED !!!!!!!!!!!!!!!
 
   if (modelType == "SD") {
     modelObject <- stanmodels$GUTS_SD
+    if (odeIntegrator == "euler"){
+      modelObject <- stanmodels$GUTS_SD_simple
+    }
   }
   if (modelType == "IT") {
     modelObject <- stanmodels$GUTS_IT
