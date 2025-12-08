@@ -117,6 +117,9 @@ fitBeeGUTS <- function(data, # CHECK CORRECT DATA OBJECT IS USED !!!!!!!!!!!!!!!
   }
   if (modelType == "IT") {
     modelObject <- stanmodels$GUTS_IT
+    if (odeIntegrator == "euler"){
+      modelObject <- stanmodels$GUTS_IT_simple
+    }
     lsStanData$distribution <- switch(distribution, loglogistic = 1, lognormal = 2)
   }
 
