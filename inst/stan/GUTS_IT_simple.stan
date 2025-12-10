@@ -36,7 +36,7 @@ functions {
     return(dy_dt);
   }
 
-  matrix solve_TKTD_varIT(vector y0, real t0, vector ts, array[] real theta, data vector tconc, data vector conc, data real relTol, data real absTol, int maxSteps){
+  matrix solve_TKTD_varIT(vector y0, vector ts, array[] real theta, data vector tconc, data vector conc){
 
     array[1] int x_i;
     x_i[1] = size(tconc);
@@ -47,21 +47,21 @@ functions {
     //                      to_array_1d(append_row(to_vector(tconc), to_vector(conc))),
     //                      x_i);
     array[size(ts)] vector[1] ode_res;
-    ode_res[1] = y0;
     vector[1] statevars = y0;
+    ode_res[1] = y0 + 1e-9 * TKTD_varIT(1e-9,statevars,theta,to_array_1d(append_row(tconc, conc)),x_i);;
+    // vector[1] tempres = y0;
     vector[1] deriv = y0;
     real tforiter;
     // real tforiter_p1;
     for (i in 2:size(ts)){
       for (j in 1:101){
         tforiter = ts[i-1] + (ts[i] - ts[i-1])/100 * (j-1);
-        //tforiter_p1 = ts[i-1] + (ts[i] - ts[i-1])/100 * (j);
+        // tforiter_p1 = ts[i-1] + (ts[i] - ts[i-1])/100 * (j);
         //print(tforiter);
         deriv = TKTD_varIT(tforiter,statevars,theta,to_array_1d(append_row(tconc, conc)),x_i);
         statevars = statevars + deriv * 0.01;
-        //tempres = statevars +  deriv * 0.01;
-        //statevars = statevars + 0.5 * 0.01 * (deriv +
-        //                                      TKTD_varSD(tforiter_p1,tempres,theta,to_array_1d(append_row(to_vector(tconc), to_vector(conc))),x_i));
+        // tempres = statevars +  deriv * 0.01;
+        // statevars = statevars + 0.5 * 0.01 * (deriv + TKTD_varIT(tforiter_p1,tempres,theta,to_array_1d(append_row(tconc, to_vector(conc))),x_i));
       }
       //print(statevars);
       ode_res[i] = statevars;
@@ -97,9 +97,9 @@ transformed data{
 
   for(gr in 1:nGroup){
     tNsurv_ode[idS_lw[gr]:idS_up[gr]] = to_vector(tNsurv[idS_lw[gr]:idS_up[gr]]);
-    tNsurv_ode[idS_lw[gr]] = tNsurv[idS_lw[gr]] + 1e-9 ; // to start ode integrator at 0
+    // tNsurv_ode[idS_lw[gr]] = tNsurv[idS_lw[gr]] + 1e-9 ; // to start ode integrator at 0
     tconc_ode[idC_lw[gr]:idC_up[gr]] = to_vector(tconc[idC_lw[gr]:idC_up[gr]]);
-    tconc_ode[idC_lw[gr]] = tconc[idC_lw[gr]] + 1e-9 ; // to start ode integrator at 0
+    // tconc_ode[idC_lw[gr]] = tconc[idC_lw[gr]] + 1e-9 ; // to start ode integrator at 0
   }
 
 }
@@ -135,7 +135,7 @@ transformed parameters{
   for(gr in 1:nGroup){
      real hb  = 10^hb_log10[groupDataset[gr]]; // hb
     /* initial time must be less than t0 = 0, so we use a very small close small number -1e-9 */
-      y_hat[idS_lw[gr]:idS_up[gr], 1] = solve_TKTD_varIT(y0, 0.0, tNsurv_ode[idS_lw[gr]:idS_up[gr]], param, to_vector(tconc_ode[idC_lw[gr]:idC_up[gr]]), to_vector(conc[idC_lw[gr]:idC_up[gr]]), relTol, absTol, maxSteps)[,1];
+      y_hat[idS_lw[gr]:idS_up[gr], 1] = solve_TKTD_varIT(y0, tNsurv_ode[idS_lw[gr]:idS_up[gr]], param, tconc_ode[idC_lw[gr]:idC_up[gr]], to_vector(conc[idC_lw[gr]:idC_up[gr]]))[,1];
 
     for(i in idS_lw[gr]:idS_up[gr]){
 

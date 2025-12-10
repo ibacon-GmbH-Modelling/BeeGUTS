@@ -44,7 +44,7 @@ functions {
   }
 
   // matrix solve_TKTD_varSD(array[] real y0, real t0, array[] real ts, array[] real theta, data array[] real tconc, data array[] real conc, data real relTol, data real absTol, int maxSteps){
-  matrix solve_TKTD_varSD(vector y0, real t0,vector ts, array[] real theta, data vector tconc, data vector conc, data real relTol, data real absTol, int maxSteps){
+  matrix solve_TKTD_varSD(vector y0, vector ts, array[] real theta, data vector tconc, data vector conc){
         // implementation of a modified Euler method with correction step
         array[1] int x_i;
         x_i[1] = size(tconc);
@@ -52,7 +52,8 @@ functions {
         vector[2] deriv = y0;
         vector[2] tempres = y0;
         array[size(ts)] vector[2] ode_res;
-        ode_res[1] = y0;
+        // this is to avoid artificially inflating the Rhat value for the first point of the time vector
+        ode_res[1] = y0 + 1e-9 * TKTD_varSD(1e-9,statevars,theta,to_array_1d(append_row(to_vector(tconc), to_vector(conc))),x_i);;
         real tforiter;
         // real tforiter_p1;
         for (i in 2:size(ts)){
@@ -135,7 +136,7 @@ transformed parameters{
     param[4] = 10^hb_log10[groupDataset[gr]]; // hb
 
     /* initial time must be less than t0 = 0, so we use a very small close small number 1e-9 to at at time tNsurv and tconc */
-    y_hat[idS_lw[gr]:idS_up[gr],1:2] = solve_TKTD_varSD(y0, 0, tNsurv_ode[idS_lw[gr]:idS_up[gr]], param, tconc_ode[idC_lw[gr]:idC_up[gr]], to_vector(conc[idC_lw[gr]:idC_up[gr]]), relTol, absTol, maxSteps);
+    y_hat[idS_lw[gr]:idS_up[gr],1:2] = solve_TKTD_varSD(y0, tNsurv_ode[idS_lw[gr]:idS_up[gr]], param, tconc_ode[idC_lw[gr]:idC_up[gr]], to_vector(conc[idC_lw[gr]:idC_up[gr]]));
 
     Psurv_hat[idS_lw[gr]:idS_up[gr]] = exp( - y_hat[idS_lw[gr]:idS_up[gr], 2]);
 
