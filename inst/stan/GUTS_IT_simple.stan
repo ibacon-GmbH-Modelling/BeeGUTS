@@ -40,30 +40,17 @@ functions {
 
     array[1] int x_i;
     x_i[1] = size(tconc);
-    // array[size(ts)] vector[1] ode_res
-    //   = ode_rk45_tol(TKTD_varIT, to_vector(y0), t0, ts,
-    //                      // additional control parameters for the solver: real rel_tol, real abs_tol, int max_num_steps
-    //                      relTol, absTol, maxSteps, theta,
-    //                      to_array_1d(append_row(to_vector(tconc), to_vector(conc))),
-    //                      x_i);
     array[size(ts)] vector[1] ode_res;
     vector[1] statevars = y0;
     ode_res[1] = y0 + 1e-9 * TKTD_varIT(1e-9,statevars,theta,to_array_1d(append_row(tconc, conc)),x_i);;
-    // vector[1] tempres = y0;
     vector[1] deriv = y0;
     real tforiter;
-    // real tforiter_p1;
     for (i in 2:size(ts)){
       for (j in 1:101){
         tforiter = ts[i-1] + (ts[i] - ts[i-1])/100 * (j-1);
-        // tforiter_p1 = ts[i-1] + (ts[i] - ts[i-1])/100 * (j);
-        //print(tforiter);
         deriv = TKTD_varIT(tforiter,statevars,theta,to_array_1d(append_row(tconc, conc)),x_i);
         statevars = statevars + deriv * 0.01;
-        // tempres = statevars +  deriv * 0.01;
-        // statevars = statevars + 0.5 * 0.01 * (deriv + TKTD_varIT(tforiter_p1,tempres,theta,to_array_1d(append_row(tconc, to_vector(conc))),x_i));
       }
-      //print(statevars);
       ode_res[i] = statevars;
     }
     matrix[size(ts), 1] rtn;

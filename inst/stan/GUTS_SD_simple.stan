@@ -43,9 +43,8 @@ functions {
     return(dy_dt);
   }
 
-  // matrix solve_TKTD_varSD(array[] real y0, real t0, array[] real ts, array[] real theta, data array[] real tconc, data array[] real conc, data real relTol, data real absTol, int maxSteps){
   matrix solve_TKTD_varSD(vector y0, vector ts, array[] real theta, data vector tconc, data vector conc){
-        // implementation of a modified Euler method with correction step
+        // implementation of a modified Euler method
         array[1] int x_i;
         x_i[1] = size(tconc);
         vector[2] statevars = y0;
@@ -53,21 +52,14 @@ functions {
         vector[2] tempres = y0;
         array[size(ts)] vector[2] ode_res;
         // this is to avoid artificially inflating the Rhat value for the first point of the time vector
-        ode_res[1] = y0 + 1e-9 * TKTD_varSD(1e-9,statevars,theta,to_array_1d(append_row(to_vector(tconc), to_vector(conc))),x_i);;
+        ode_res[1] = y0 + 1e-9 * TKTD_varSD(1e-9,statevars,theta,to_array_1d(append_row(tconc, conc)),x_i);;
         real tforiter;
-        // real tforiter_p1;
         for (i in 2:size(ts)){
           for (j in 1:101){
             tforiter = ts[i-1] + (ts[i] - ts[i-1])/100 * (j-1);
-            //tforiter_p1 = ts[i-1] + (ts[i] - ts[i-1])/100 * (j);
-            //print(tforiter);
-            deriv = TKTD_varSD(tforiter,statevars,theta,to_array_1d(append_row(to_vector(tconc), to_vector(conc))),x_i);
+            deriv = TKTD_varSD(tforiter,statevars,theta,to_array_1d(append_row(tconc, conc)),x_i);
             statevars = statevars + deriv * 0.01;
-            //tempres = statevars +  deriv * 0.01;
-            //statevars = statevars + 0.5 * 0.01 * (deriv +
-            //                                      TKTD_varSD(tforiter_p1,tempres,theta,to_array_1d(append_row(to_vector(tconc), to_vector(conc))),x_i));
           }
-          //print(statevars);
           ode_res[i] = statevars;
         }
 
