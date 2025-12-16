@@ -12,7 +12,7 @@ Unified Threshold model of Survival (GUTS).
 
 The links below point towards specific pages that will guide you through
 the various aspects of the BeeGUTS package (These pages refer to package version
-1.4)
+1.4 and above)
 
 - [Datasets and Data read](./dataset_loading.md)
 - [Model calibration](./calibration.md)
