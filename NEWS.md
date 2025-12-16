@@ -1,4 +1,5 @@
 # BeeGUTS 1.5
+* Change of github repository location
 * Performance improvements in fit of Acute datasets through user-defined
   binning for the calculation of the exposure concentrations
 * Implementation of a simpler Euler integration method (as an option on top of

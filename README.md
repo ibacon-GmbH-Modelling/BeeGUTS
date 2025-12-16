@@ -52,7 +52,7 @@ And the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("bgoussen/BeeGUTS")
+devtools::install_github("ibacon-GmbH-Modelling/BeeGUTS")
 ```
 
 ## Documentation
