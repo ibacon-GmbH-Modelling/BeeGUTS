@@ -5,7 +5,7 @@
   the default Runge-Kutta45 method)
 
 # BeeGUTS 1.4
-* Change of maintener
+* Change of maintainer
 
 # BeeGUTS 1.3
 * Parallelization of LC/LD calculations
