@@ -1,5 +1,8 @@
 # BeeGUTS 1.5
-* Performance improvements in fit of Acute datasets
+* Performance improvements in fit of Acute datasets through user-defined
+  binning for the calculation of the exposure concentrations
+* Implementation of a simpler Euler integration method (as an option on top of
+  the default Runge-Kutta45 method)
 
 # BeeGUTS 1.4
 * Change of maintener
