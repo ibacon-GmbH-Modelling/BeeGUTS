@@ -1,6 +1,6 @@
 Datasets and data read
 ================
-2023-10-13
+2025-12-16
 
 Back to [home](./home.md)
 
@@ -75,6 +75,10 @@ concentration at time 0.
 To rest of the calculations will be done by the data reading function
 once all the parameters related to the test will be passed (see below).
 
+Since version 1.5.0 the user can provide the time step for the automatic
+calculation of the exposure concentration through the `binning` argument
+(in units of days).
+
 ### Acute Contact
 
 Acute contact tests are tests in which a drop of contaminated liquid is
@@ -87,6 +91,10 @@ As for the acute oral test, also here is sufficient to give only the
 maximum value of the exposure and the software will reconstruct an
 accurate full time-dependent profile, which will follow an exponential
 decay.
+
+Since version 1.5.0 the user can provide the time step for the automatic
+calculation of the exposure concentration through the `binning` argument
+(in units of days).
 
 ## Load the datasets
 
@@ -162,7 +170,8 @@ For simplicity, always the same data file is used for the example.
 ``` r
 datacalAO <- dataGUTS(file_location = file1,
                     test_type = "Acute_Oral",
-                    bee_species = "Honey_Bee")
+                    bee_species = "Honey_Bee",
+                    binning = 0.5)
 ```
 
 The dataset can then simply be plotted with
@@ -189,7 +198,8 @@ For simplicity, always the same data file is used for the example.
 ``` r
 datacalAC <- dataGUTS(file_location = file1,
                     test_type = "Acute_Contact",
-                    bee_species = "Honey_Bee")
+                    bee_species = "Honey_Bee",
+                    binning = 0.5)
 ```
 
 The dataset can then simply be plotted with
