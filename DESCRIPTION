@@ -1,6 +1,6 @@
 Package: BeeGUTS
 Title: General Unified Threshold Model of Survival for Bees using Bayesian Inference
-Version: 1.4.0
+Version: 1.5.0
 Authors@R: 
     c(
     person(given = "Benoit",
@@ -66,8 +66,8 @@ LinkingTo:
     rstan (>= 2.26.0),
     StanHeaders (>= 2.26.0)
 SystemRequirements: GNU make
-URL: https://github.com/bgoussen/BeeGUTS
-BugReports: https://github.com/bgoussen/BeeGUTS/issues
+URL: https://github.com/ibacon-GmbH-Modelling/BeeGUTS
+BugReports: https://github.com/ibacon-GmbH-Modelling/BeeGUTS/issues
 Suggests:
     rmarkdown,
     knitr
