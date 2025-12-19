@@ -165,6 +165,9 @@ priorsBeeGUTS <- function(x, modelType = NULL){
     ## background hazard rate
     hbMean_log10 =  .priorMean(hbMin, hbMax),
     hbSD_log10 = .priorSD(hbMin, hbMax),
+    # possible change could be this
+    #hbMean_log10 =  rep(.priorMean(hbMin, hbMax),x$nDatasets),
+    #hbSD_log10 = rep(.priorSD(hbMin, hbMax),x$nDatasets),
     ## killing rate parameter: bw
     bwMean_log10 = .priorMean(bwMin, bwMax),
     bwSD_log10 = .priorSD(bwMin, bwMax),

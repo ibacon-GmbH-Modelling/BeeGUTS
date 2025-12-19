@@ -1,3 +1,7 @@
+# BeeGUTS 1.6
+* New functionality added: prefit background mortality to control data to update
+the prior distribution on the background mortality parameter.
+
 # BeeGUTS 1.5
 * Change of github repository location
 * Performance improvements in fit of Acute datasets through user-defined
