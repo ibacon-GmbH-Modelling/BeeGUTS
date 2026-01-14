@@ -36,9 +36,9 @@ TRT <- function(object, concRange = NULL){
 #' @examples
 #' \donttest{
 #' data(fitBetacyfluthrin_Chronic)
-#' TRT(fitBetacyfluthrin_Chronic)
+#' TRT(fitBetacyfluthrin_Chronic,ncores=2)
 #' }
-TRT.beeSurvFit <- function(object, concRange = NULL){
+TRT.beeSurvFit <- function(object, concRange = NULL, ncores=NULL){
   if (!is(object,"beeSurvFit")) {
     stop("predict.beeSurvFit: an object of class 'beeSurvFit' is expected")
   }
@@ -53,24 +53,24 @@ TRT.beeSurvFit <- function(object, concRange = NULL){
 
   # compute LDD50 at 10 days assuming constant concentration
   LDD50_10 <- LCx(object, X = 50, testType = "Chronic_Oral", timeLCx = 10,
-                  concRange = c(0,maxcon), nPoints = nPoints)
+                  concRange = c(0,maxcon), nPoints = nPoints, ncores=ncores)
   # rerun if unfortunately we are out of the range
   if (is.na(LDD50_10$dfLCx$LCx[3])){
     warning("95% upperlimit on LDD50 value at 2 days is outside the given range.
 New calculation done with range increased by a factor 5.")
     LDD50_10 <- LCx(object, X = 50, testType = "Chronic_Oral", timeLCx = 10,
-                   concRange = c(0,maxcon*5), nPoints = 5*nPoints)
+                   concRange = c(0,maxcon*5), nPoints = 5*nPoints, ncores=ncores)
   }
 
   # compute LDD50 at 27 days assuming constant concentration
   LDD50_27 <- LCx(object, X = 50, testType = "Chronic_Oral", timeLCx = 27,
-                  concRange = c(0,maxcon), nPoints = nPoints)
+                  concRange = c(0,maxcon), nPoints = nPoints, ncores=ncores)
   # rerun if unfortunately we are out of the range
   if (is.na(LDD50_27$dfLCx$LCx[3])){
     warning("95% upperlimit on LDD50 value at 2 days is outside the given range.
 New calculation done with range increased by a factor 5.")
     LDD50_27 <- LCx(object, X = 50, testType = "Chronic_Oral", timeLCx = 27,
-                    concRange = c(0,maxcon*5), nPoints =  5*nPoints)
+                    concRange = c(0,maxcon*5), nPoints =  5*nPoints, ncores=ncores)
   }
 
   # Check for Time Reinforced Toxicity (EFSA, 2023 - Annex G)

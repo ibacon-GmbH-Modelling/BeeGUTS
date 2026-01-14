@@ -44,7 +44,7 @@ LCx <- function(object, ...){
 #' @examples
 #' \donttest{
 #' data(fitBetacyfluthrin_Chronic)
-#' out <- LCx(fitBetacyfluthrin_Chronic)
+#' out <- LCx(fitBetacyfluthrin_Chronic,ncores=2)
 #' }
 LCx.beeSurvFit <- function(object,
                            X = 50,
@@ -52,6 +52,7 @@ LCx.beeSurvFit <- function(object,
                            timeLCx = NULL,
                            concRange = NULL,
                            nPoints = 100,
+                           ncores = NULL,
                            ...) {
 
   # library(doParallel)
@@ -104,14 +105,19 @@ LCx.beeSurvFit <- function(object,
   }
 
   # start the parallel cluster
-  chcr <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
-  if (nzchar(chcr) && chcr == "TRUE") {
+  # this does not work if the cluster is created with PSOCK
+  # chcr <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
+  # if (nzchar(chcr) && chcr == "TRUE") {
+  if(is.null(ncores)){
+    # use all cores in devtools::test()
+    #parallel::detectCores(logical = FALSE)-1L
+    # avoids errors on single core machines
+    ncores = max(1L, parallel::detectCores(logical = FALSE) - 1L)
+
+  } else {
     # this is needed in order to pass CRAN checks
     # use 2 cores in CRAN/Travis/AppVeyor
     ncores <- 2L
-  } else {
-    # use all cores in devtools::test()
-    ncores = parallel::detectCores(logical = FALSE)-1L
   }
   cl <- parallel::makeCluster(mc <- getOption("cl.cores",ncores))
   doParallel::registerDoParallel(cl)

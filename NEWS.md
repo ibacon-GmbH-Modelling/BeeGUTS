@@ -1,3 +1,6 @@
+# BeeGUTS 1.5.1
+* Small changes for CRAN checks
+
 # BeeGUTS 1.5
 * Change of github repository location
 * Performance improvements in fit of Acute datasets through user-defined
