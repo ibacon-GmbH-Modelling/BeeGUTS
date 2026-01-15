@@ -14,6 +14,7 @@
 #' @param concRange Argument of LCx, range of concentrations to find LDD50
 #' @param nPoints Argument of LCx, Number of time point in \code{concRange} between 0 and the
 #' maximal concentration. 100 by default.
+#' @param ncores Argument of LCx, number of cores for parallelization
 #'
 #' @return A object of class \code{ggplot} containing the graph of the comparison
 #' between LDD50 at day 2 and day 10 and the data.frame with the plotted values.
@@ -35,6 +36,7 @@ ShortTimeEffects <- function(object, fullcalculation=FALSE, concRange=NULL, nPoi
 #' @param concRange Argument of LCx, range of concentrations to find LDD50
 #' @param nPoints Argument of LCx, Number of time point in \code{concRange} between 0 and the
 #' maximal concentration. 100 by default.
+#' @param ncores Argument of LCx, number of cores for parallelization
 #'
 #' @return A object of class \code{ggplot} containing the graph of the comparison
 #' between LDD50 at day 2 and day 10 and the data.frame with the plotted values.

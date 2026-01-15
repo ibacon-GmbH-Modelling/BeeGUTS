@@ -9,6 +9,7 @@
 #'
 #' @param object An object used to select a method
 #' @param concRange Argument of LCx, range of concentrations to find LDD50
+#' @param ncores Argument of LCx, number of cores for parallelization
 #'
 #' @return A \code{ggplot} object with graph of the LDD extrapolation compared
 #' to the Haber's law and a data.frame with the calculations
@@ -17,7 +18,7 @@
 #'
 #' @export
 #'
-TRT <- function(object, concRange = NULL){
+TRT <- function(object, concRange = NULL, ncores=NULL){
   UseMethod("TRT")
 }
 
@@ -26,6 +27,7 @@ TRT <- function(object, concRange = NULL){
 #'
 #' @param object An object of class \code{beeSurvFit}
 #' @param concRange Argument of LCx, range of concentrations to find LDD50
+#' @param ncores Argument of LCx, number of cores for parallelization
 #'
 #' @return A object of class \code{ggplot} containing the graph of the comparison
 #' between Haber's law and the predicted lethal doses at 10 and 27 days and a

@@ -31,6 +31,7 @@ LCx <- function(object, ...){
 #' highest tested concentration of the calibration experiment.
 #' @param nPoints Number of time point in \code{concRange} between 0 and the
 #' maximal concentration. 100 by default.
+#' @param ncores Number of cores for parallelization
 #' @param ... Further arguments to be passed to generic methods
 #' @param testType Test type for which the \eqn{LC_{X}} is calculated
 #'  amongst "Acute_Oral", "Acute_Contact", and "Chronic_Oral". Note that for
@@ -113,11 +114,10 @@ LCx.beeSurvFit <- function(object,
     #parallel::detectCores(logical = FALSE)-1L
     # avoids errors on single core machines
     ncores = max(1L, parallel::detectCores(logical = FALSE) - 1L)
-
   } else {
     # this is needed in order to pass CRAN checks
     # use 2 cores in CRAN/Travis/AppVeyor
-    ncores <- 2L
+    ncores <- ncores
   }
   cl <- parallel::makeCluster(mc <- getOption("cl.cores",ncores))
   doParallel::registerDoParallel(cl)
