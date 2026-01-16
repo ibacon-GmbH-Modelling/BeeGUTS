@@ -17,9 +17,9 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-![GitHub R package version](https://img.shields.io/github/r-package/v/bgoussen/BeeGUTS)
+![GitHub R package version](https://img.shields.io/github/r-package/v/ibacon-GmbH-Modelling/BeeGUTS)
 [![CRAN status](https://www.r-pkg.org/badges/version/BeeGUTS)](https://CRAN.R-project.org/package=BeeGUTS)
-[![R-CMD-check](https://github.com/bgoussen/BeeGUTS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bgoussen/BeeGUTS/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/ibacon-GmbH-Modelling/BeeGUTS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ibacon-GmbH-Modelling/BeeGUTS/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of BeeGUTS is to analyse the survival toxicity tests performed for

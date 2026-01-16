@@ -8,10 +8,10 @@
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-green.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 ![GitHub R package
-version](https://img.shields.io/github/r-package/v/bgoussen/BeeGUTS)
+version](https://img.shields.io/github/r-package/v/ibacon-GmbH-Modelling/BeeGUTS)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/BeeGUTS)](https://CRAN.R-project.org/package=BeeGUTS)
-[![R-CMD-check](https://github.com/bgoussen/BeeGUTS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bgoussen/BeeGUTS/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/ibacon-GmbH-Modelling/BeeGUTS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ibacon-GmbH-Modelling/BeeGUTS/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of BeeGUTS is to analyse the survival toxicity tests performed
@@ -87,8 +87,8 @@ fit <- fitBeeGUTS(lsData, modelType = "SD", nIter = 3000, nChains = 1) # Fit a S
 #> 
 #> SAMPLING FOR MODEL 'GUTS_SD' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.001757 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 17.57 seconds.
+#> Chain 1: Gradient evaluation took 0.00301 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 30.1 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -105,13 +105,10 @@ fit <- fitBeeGUTS(lsData, modelType = "SD", nIter = 3000, nChains = 1) # Fit a S
 #> Chain 1: Iteration: 2700 / 3000 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 3000 / 3000 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 132.25 seconds (Warm-up)
-#> Chain 1:                161.472 seconds (Sampling)
-#> Chain 1:                293.722 seconds (Total)
+#> Chain 1:  Elapsed Time: 101.544 seconds (Warm-up)
+#> Chain 1:                165.025 seconds (Sampling)
+#> Chain 1:                266.569 seconds (Total)
 #> Chain 1:
-#> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-#> Running the chains for more iterations may help. See
-#> https://mc-stan.org/misc/warnings.html#bulk-ess
 #> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#tail-ess
@@ -152,16 +149,16 @@ summary(fit) # Gives a summary of the results
 #> Posteriors of the parameters (quantiles) (select with '$Qposteriors'):
 #> 
 #>  parameters      median        Q2.5       Q97.5
-#>       hb[1] 6.81693e-03 2.38802e-03 1.00973e-02
+#>       hb[1] 6.73561e-03 1.98921e-03 1.00686e-02
 #>  parameters      median        Q2.5       Q97.5
-#>          kd 1.00467e+00 7.49301e-01 2.47508e+00
-#>          zw 9.44988e+00 5.56304e+00 1.08377e+01
-#>          bw 8.91085e-03 5.98440e-03 1.07859e-02
+#>          kd 1.01806e+00 7.20743e-01 2.87306e+00
+#>          zw 9.41747e+00 4.98442e+00 1.06524e+01
+#>          bw 8.86067e-03 6.00886e-03 1.04942e-02
 #> 
 #> 
-#>  Maximum Rhat computed (na.rm = TRUE): 1.010767 
-#>  Minimum Bulk_ESS: 69 
-#>  Minimum Tail_ESS: 43 
+#>  Maximum Rhat computed (na.rm = TRUE): 1.034252 
+#>  Minimum Bulk_ESS: 120 
+#>  Minimum Tail_ESS: 73 
 #>  Bulk_ESS and Tail_ESS are crude measures of effecting sampling size for
 #>       bulk and tail quantities respectively. An ESS > 100 per chain can be
 #>       considered as a good indicator. Rhat is an indicator of chains convergence.
@@ -176,8 +173,8 @@ validation <- validate(fit, lsData, fithb = TRUE) # produce a validation of the 
 #> 
 #> SAMPLING FOR MODEL 'GUTS_hb_only' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 1.6e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.
+#> Chain 1: Gradient evaluation took 1.8e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.18 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -194,9 +191,9 @@ validation <- validate(fit, lsData, fithb = TRUE) # produce a validation of the 
 #> Chain 1: Iteration: 2700 / 3000 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 3000 / 3000 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.086 seconds (Warm-up)
-#> Chain 1:                0.094 seconds (Sampling)
-#> Chain 1:                0.18 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.108 seconds (Warm-up)
+#> Chain 1:                0.084 seconds (Sampling)
+#> Chain 1:                0.192 seconds (Total)
 #> Chain 1: 
 #> Bayesian Inference performed with Stan.
 #>  MCMC sampling setup (select with '$setupMCMC')
@@ -205,9 +202,9 @@ validation <- validate(fit, lsData, fithb = TRUE) # produce a validation of the 
 #>  Thinning interval: 1 
 #>  Number of chains: 1 
 #> 
-#> Maximum Rhat computed (na.rm = TRUE): 1.008558 
-#>  Minimum Bulk_ESS: 270 
-#>  Minimum Tail_ESS: 337 
+#> Maximum Rhat computed (na.rm = TRUE): 1.00194 
+#>  Minimum Bulk_ESS: 297 
+#>  Minimum Tail_ESS: 427 
 #>  Bulk_ESS and Tail_ESS are crude measures of effecting sampling size for
 #>       bulk and tail quantities respectively. An ESS > 100 per chain can be
 #>       considered as a good indicator. Rhat is an indicator of chains convergence.
@@ -215,8 +212,8 @@ validation <- validate(fit, lsData, fithb = TRUE) # produce a validation of the 
 #>       one can call 'rstan::monitor(beeSurvValidation$hbfit) 
 #> 
 #> Results for hb: 
-#>  parameters      median         Q2.5       Q97.5
-#>          hb 0.002477508 0.0007299983 0.007123733
+#>  parameters      median         Q2.5      Q97.5
+#>          hb 0.002449132 0.0006986576 0.00649062
 #> Note that computing can be quite long (several minutes).
 #>   Tips: To reduce that time you can reduce Number of MCMC chains (default mcmc_size is set to 1000).
 plot(validation) # plot the validation results
